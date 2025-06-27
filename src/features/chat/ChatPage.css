@@ -1,0 +1,47 @@
+.chat-container {
+  width: 100%;
+  max-width: 600px;
+  height: 100%;
+  max-height: 800px;
+  margin: 2rem;
+  background-color: #f9f6f0;
+  border: 2px solid #e8e2d4;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.chat-header {
+  margin: 2rem 2rem 1rem 2rem;
+  text-align: center;
+  background-color: transparent;
+}
+
+.chat-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #4a6741;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .chat-container {
+    margin: 1rem;
+    border-radius: 1.5rem;
+    max-height: none;
+    height: 100%;
+  }
+  
+  .chat-header {
+    margin: 1.5rem 1.5rem 1rem 1.5rem;
+  }
+  
+  .app-title {
+    font-size: 2.5rem;
+  }
+} 
