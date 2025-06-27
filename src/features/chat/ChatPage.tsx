@@ -6,13 +6,20 @@ import { ChatInput } from './components/ChatInput';
 import './ChatPage.css';
 
 export const ChatPage: React.FC = () => {
-  const { messages, isLoading, sendMessage } = useChat();
+  const { messages, isLoading, sendMessage, clearChat } = useChat();
   const { messagesEndRef, setAiMessageRef } = useScrollManager(messages, isLoading);
 
   return (
     <div className="chat-container">
       <div className="chat-header">
         <h1 className="chat-title">Sage 🌿</h1>
+        <button 
+          className="clear-button"
+          onClick={clearChat}
+          disabled={isLoading}
+        >
+          Clear
+        </button>
       </div>
       
       <MessageList 

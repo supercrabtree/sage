@@ -18,6 +18,7 @@
   margin: 2rem 2rem 1rem 2rem;
   text-align: center;
   background-color: transparent;
+  position: relative;
 }
 
 .chat-title {
@@ -26,6 +27,29 @@
   color: #4a6741;
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
+}
+
+.clear-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: 1px solid #ccc;
+  color: #666;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.clear-button:hover:not(:disabled) {
+  border-color: #999;
+  color: #333;
+}
+
+.clear-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Responsive styles */
@@ -41,7 +65,12 @@
     margin: 1.5rem 1.5rem 1rem 1.5rem;
   }
   
-  .app-title {
+  .chat-title {
     font-size: 2.5rem;
+  }
+
+  .clear-button {
+    position: static;
+    margin-top: 0.5rem;
   }
 } 
