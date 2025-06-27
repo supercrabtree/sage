@@ -10,6 +10,9 @@ const DEFAULT_MAX_TOKENS: u32 = 1000;
 const DEFAULT_TEMPERATURE: f32 = 0.7;
 const REQUEST_TIMEOUT_SECS: u64 = 30;
 
+// Estimated token count: 754
+const ROLE_PROMPT_FILE: &str = include_str!("role_prompt.txt");
+
 // Global HTTP client for reuse
 static HTTP_CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
 
@@ -120,14 +123,22 @@ async fn send_message_to_mistral(messages: Vec<FrontendMessage>) -> Result<AiRes
     
     let client = get_http_client();
     
-    // Convert frontend messages to Mistral format
-    let mistral_messages: Vec<MistralMessage> = messages
+    // Start with system message containing the role prompt from file
+    let mut mistral_messages = vec![MistralMessage {
+        role: "system".to_string(),
+        content: ROLE_PROMPT_FILE.trim().to_string(),
+    }];
+    
+    // Add user and assistant messages from conversation history
+    let conversation_messages: Vec<MistralMessage> = messages
         .iter()
         .map(|msg| MistralMessage {
             role: if msg.sender == "user" { "user".to_string() } else { "assistant".to_string() },
             content: msg.text.clone(),
         })
         .collect();
+    
+    mistral_messages.extend(conversation_messages);
     
     let request_body = MistralRequest {
         model,
