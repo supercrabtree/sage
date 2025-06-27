@@ -109,6 +109,25 @@ html, body, #root {
   border-bottom-left-radius: 0.25rem;
 }
 
+.message-bubble.loading {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.message-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.send-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.send-button:disabled:hover {
+  background-color: #a0aec0;
+}
+
 .input-container {
   display: flex;
   padding: 1rem;
@@ -195,5 +214,13 @@ html, body, #root {
 
   .message-input::placeholder {
     color: #a0aec0;
+  }
+
+  .send-button:disabled {
+    background-color: #4a5568;
+  }
+
+  .send-button:disabled:hover {
+    background-color: #4a5568;
   }
 }
