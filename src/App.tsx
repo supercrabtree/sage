@@ -1,50 +1,89 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
-function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+interface Message {
+  id: number;
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: Date;
+}
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
+function App() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputText, setInputText] = useState("");
+
+  const handleSendMessage = () => {
+    if (inputText.trim() === "") return;
+
+    const newMessage: Message = {
+      id: Date.now(),
+      text: inputText,
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, newMessage]);
+    setInputText("");
+
+    // TODO: Add AI response here later
+    // For now, just add a simple echo response
+    setTimeout(() => {
+      const aiResponse: Message = {
+        id: Date.now() + 1,
+        text: `Echo: ${inputText}`,
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, aiResponse]);
+    }, 1000);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="chat-container">
+      <div className="chat-header">
+        <h1>Sage</h1>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+      
+      <div className="messages-container">
+        {messages.length === 0 ? (
+          <div className="empty-state">
+            <p>Start a conversation to begin learning!</p>
+          </div>
+        ) : (
+          messages.map(message => (
+            <div key={message.id} className={`message ${message.sender}`}>
+              <div className="message-bubble">
+                {message.text}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
 
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
+      <div className="input-container">
         <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
+          type="text"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Type your message..."
+          className="message-input"
         />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+        <button 
+          onClick={handleSendMessage}
+          className="send-button"
+        >
+          Send
+        </button>
+      </div>
+    </div>
   );
 }
 
