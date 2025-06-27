@@ -58,6 +58,17 @@ function App() {
         text: "Hello, I'm Sage 🌿 Ready to explore something new together?",
         sender: 'ai',
         timestamp: new Date()
+      }, {
+        id: 2,
+        text: "Who is the best architect in history?",
+        sender: 'user',
+        timestamp: new Date()
+      },
+      {
+        id: 3,
+        text: "<div><p>Determining the “best” architect in history can be subjective and depends on personal preferences, as well as the criteria one uses to define “best.” However, several architects have made significant impacts on the world of architecture and are often recognized for their contributions. Here are a few:</p><ol><li><p><strong>Leonardo da Vinci (1452-1519)</strong>: While not primarily an architect, da Vinci’s influence on architecture is immense. His drawings and ideas, such as the “ideal city” and the “tracery of arches,” were far ahead of their time and have inspired architects for centuries.</p></li><li><p><strong>Andrea Palladio (1508-1580)</strong>: Palladio’s work, which includes villas and churches in Italy, has had a profound influence on Western architecture. His designs, based on classical Greek and Roman models, have been widely copied and emulated.</p></li><li><p><strong>Giorgio Vasari (1511-1574)</strong>: Vasari was an Italian architect, painter, and writer who helped to establish the Renaissance style. His architectural works include the Uffizi Gallery in Florence.</p></li><li><p><strong>Filippo Brunelleschi (1377-1446)</strong>: Brunelleschi is known for his work on the dome of the Florence Cathedral (Duomo), one of the most iconic architectural achievements of the Renaissance.</p></li><li><p><strong>Frank Lloyd Wright (1867-1959)</strong>: Wright was an American architect whose innovative designs, including the Guggenheim Museum in New York City, have had a significant impact on modern architecture.</p></li><li><p><strong>Le Corbusier (1887-1965)</strong>: A Swiss-French architect, Le Corbusier was a pioneer of the modern movement. His work, such as the Villa Savoye in France, has had a profound influence on 20th-century architecture.</p></li></ol><p>Each of these architects has made significant contributions to the field, but the “best” one is a matter of personal opinion.</p></div>",
+        sender: 'ai',
+        timestamp: new Date()
       },
     ];
     setMessages(initialMessages);
