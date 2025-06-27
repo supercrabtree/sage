@@ -27,8 +27,6 @@ struct MistralResponse {
 
 #[tauri::command]
 async fn send_message_to_mistral(message: String) -> Result<String, String> {
-    // For now, use a hardcoded API key or environment variable
-    // In production, you'd want to handle this more securely
     let api_key = env::var("MISTRAL_API_KEY")
         .unwrap_or_else(|_| "MISSING".to_string());
     
@@ -39,7 +37,7 @@ async fn send_message_to_mistral(message: String) -> Result<String, String> {
     let client = reqwest::Client::new();
     
     let request_body = MistralRequest {
-        model: "mistral-small-latest".to_string(),
+        model: "open-mistral-nemo-2407".to_string(),
         messages: vec![
             MistralMessage {
                 role: "user".to_string(),
