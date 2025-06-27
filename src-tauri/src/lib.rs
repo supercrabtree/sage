@@ -1,6 +1,26 @@
 use serde::{Deserialize, Serialize};
 use std::env;
+use std::time::Duration;
 use pulldown_cmark::{Parser, Options, html};
+use std::sync::OnceLock;
+
+// Configuration constants
+const DEFAULT_MODEL: &str = "mistral-small-2506";
+const DEFAULT_MAX_TOKENS: u32 = 1000;
+const DEFAULT_TEMPERATURE: f32 = 0.7;
+const REQUEST_TIMEOUT_SECS: u64 = 30;
+
+// Global HTTP client for reuse
+static HTTP_CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
+
+fn get_http_client() -> &'static reqwest::Client {
+    HTTP_CLIENT.get_or_init(|| {
+        reqwest::Client::builder()
+            .timeout(Duration::from_secs(REQUEST_TIMEOUT_SECS))
+            .build()
+            .expect("Failed to create HTTP client")
+    })
+}
 
 #[derive(Serialize, Deserialize)]
 struct MistralMessage {
@@ -41,6 +61,7 @@ struct MistralResponse {
     choices: Vec<MistralChoice>,
 }
 
+/// Converts markdown text to HTML with comprehensive formatting options
 fn markdown_to_html(markdown: &str) -> String {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_STRIKETHROUGH);
@@ -55,16 +76,49 @@ fn markdown_to_html(markdown: &str) -> String {
     html_output
 }
 
+/// Validates input messages before sending to API
+fn validate_messages(messages: &[FrontendMessage]) -> Result<(), String> {
+    if messages.is_empty() {
+        return Err("No messages provided".to_string());
+    }
+    
+    for msg in messages {
+        if msg.text.trim().is_empty() {
+            return Err("Empty message content not allowed".to_string());
+        }
+    }
+    
+    Ok(())
+}
+
+/// Sends messages to Mistral AI API and returns formatted response
+/// 
+/// # Arguments
+/// * `messages` - Vector of frontend messages to send to the AI
+/// 
+/// # Returns
+/// * `Ok(AiResponse)` - Contains both original markdown and HTML formatted response
+/// * `Err(String)` - Error message if validation fails or API call fails
 #[tauri::command]
 async fn send_message_to_mistral(messages: Vec<FrontendMessage>) -> Result<AiResponse, String> {
-    let api_key = env::var("MISTRAL_API_KEY")
-        .unwrap_or_else(|_| "MISSING".to_string());
+    // Validate input messages
+    validate_messages(&messages)?;
     
-    if api_key == "MISSING" {
-        return Err("Mistral API key not configured. Set MISTRAL_API_KEY environment variable.".to_string());
-    }
-
-    let client = reqwest::Client::new();
+    let api_key = env::var("MISTRAL_API_KEY")
+        .map_err(|_| "Mistral API key not configured. Set MISTRAL_API_KEY environment variable.")?;
+    
+    // Get configuration from environment or use defaults
+    let model = env::var("MISTRAL_MODEL").unwrap_or_else(|_| DEFAULT_MODEL.to_string());
+    let max_tokens = env::var("MISTRAL_MAX_TOKENS")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(DEFAULT_MAX_TOKENS);
+    let temperature = env::var("MISTRAL_TEMPERATURE")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(DEFAULT_TEMPERATURE);
+    
+    let client = get_http_client();
     
     // Convert frontend messages to Mistral format
     let mistral_messages: Vec<MistralMessage> = messages
@@ -76,10 +130,10 @@ async fn send_message_to_mistral(messages: Vec<FrontendMessage>) -> Result<AiRes
         .collect();
     
     let request_body = MistralRequest {
-        model: "open-mistral-nemo-2407".to_string(),
+        model,
         messages: mistral_messages,
-        max_tokens: Some(1000),
-        temperature: Some(0.7),
+        max_tokens: Some(max_tokens),
+        temperature: Some(temperature),
     };
 
     let response = client
@@ -89,7 +143,15 @@ async fn send_message_to_mistral(messages: Vec<FrontendMessage>) -> Result<AiRes
         .json(&request_body)
         .send()
         .await
-        .map_err(|e| format!("Failed to send request: {}", e))?;
+        .map_err(|e| {
+            if e.is_timeout() {
+                "Request timed out - please try again".to_string()
+            } else if e.is_connect() {
+                "Connection failed - check your internet connection".to_string()
+            } else {
+                format!("Network error: {}", e)
+            }
+        })?;
 
     if !response.status().is_success() {
         let status = response.status();
