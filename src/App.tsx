@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
@@ -13,6 +13,42 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const aiMessageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+
+  // Scroll to bottom for user messages
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Scroll AI message to top of chat window
+  const scrollAiMessageToTop = (messageId: number) => {
+    const aiMessageElement = aiMessageRefs.current[messageId];
+    if (aiMessageElement) {
+      aiMessageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Handle scrolling based on the latest message
+  useEffect(() => {
+    if (messages.length > 0) {
+      const latestMessage = messages[messages.length - 1];
+      if (latestMessage.sender === 'ai') {
+        // Scroll AI message to top
+        setTimeout(() => scrollAiMessageToTop(latestMessage.id), 100);
+      } else {
+        // Scroll to bottom for user messages
+        scrollToBottom();
+      }
+    }
+  }, [messages]);
+
+  // Scroll when loading state changes (for typing animation)
+  useEffect(() => {
+    if (isLoading) {
+      scrollToBottom();
+    }
+  }, [isLoading]);
 
   // Add initial example messages to match the screenshot
   useEffect(() => {
@@ -104,7 +140,13 @@ function App() {
             </div>
           ) : (
             messages.map(message => (
-              <div key={message.id} className={`message ${message.sender}`}>
+              <div 
+                key={message.id} 
+                className={`message ${message.sender}`}
+                ref={message.sender === 'ai' ? (el) => {
+                  aiMessageRefs.current[message.id] = el;
+                } : undefined}
+              >
                 <div className="message-bubble">
                   {message.sender === 'ai' ? (
                     <div dangerouslySetInnerHTML={{ __html: message.text }} />
@@ -122,6 +164,7 @@ function App() {
               </div>
             </div>
           )}
+          <div ref={messagesEndRef} className="scroll-target" />
         </div>
 
         <div className="input-container">
