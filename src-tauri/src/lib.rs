@@ -8,6 +8,21 @@ struct MistralMessage {
     content: String,
 }
 
+// Frontend message structure
+#[derive(Serialize, Deserialize)]
+struct FrontendMessage {
+    id: u64,
+    text: String,
+    sender: String,
+}
+
+// Response structure with both formats
+#[derive(Serialize, Deserialize)]
+struct AiResponse {
+    original: String,  // Original markdown from AI
+    formatted: String, // HTML formatted version
+}
+
 #[derive(Serialize, Deserialize)]
 struct MistralRequest {
     model: String,
@@ -41,7 +56,7 @@ fn markdown_to_html(markdown: &str) -> String {
 }
 
 #[tauri::command]
-async fn send_message_to_mistral(message: String) -> Result<String, String> {
+async fn send_message_to_mistral(messages: Vec<FrontendMessage>) -> Result<AiResponse, String> {
     let api_key = env::var("MISTRAL_API_KEY")
         .unwrap_or_else(|_| "MISSING".to_string());
     
@@ -51,14 +66,18 @@ async fn send_message_to_mistral(message: String) -> Result<String, String> {
 
     let client = reqwest::Client::new();
     
+    // Convert frontend messages to Mistral format
+    let mistral_messages: Vec<MistralMessage> = messages
+        .iter()
+        .map(|msg| MistralMessage {
+            role: if msg.sender == "user" { "user".to_string() } else { "assistant".to_string() },
+            content: msg.text.clone(),
+        })
+        .collect();
+    
     let request_body = MistralRequest {
         model: "open-mistral-nemo-2407".to_string(),
-        messages: vec![
-            MistralMessage {
-                role: "user".to_string(),
-                content: message,
-            }
-        ],
+        messages: mistral_messages,
         max_tokens: Some(1000),
         temperature: Some(0.7),
     };
@@ -84,9 +103,13 @@ async fn send_message_to_mistral(message: String) -> Result<String, String> {
         .map_err(|e| format!("Failed to parse response: {}", e))?;
 
     if let Some(choice) = mistral_response.choices.first() {
-        // Convert markdown to HTML before returning
-        let html_content = markdown_to_html(&choice.message.content);
-        Ok(html_content)
+        let original_markdown = choice.message.content.clone();
+        let formatted_html = markdown_to_html(&original_markdown);
+        
+        Ok(AiResponse {
+            original: original_markdown,
+            formatted: formatted_html,
+        })
     } else {
         Err("No response from Mistral API".to_string())
     }
