@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::env;
+use pulldown_cmark::{Parser, Options, html};
 
 #[derive(Serialize, Deserialize)]
 struct MistralMessage {
@@ -23,6 +24,20 @@ struct MistralChoice {
 #[derive(Serialize, Deserialize)]
 struct MistralResponse {
     choices: Vec<MistralChoice>,
+}
+
+fn markdown_to_html(markdown: &str) -> String {
+    let mut options = Options::empty();
+    options.insert(Options::ENABLE_STRIKETHROUGH);
+    options.insert(Options::ENABLE_TABLES);
+    options.insert(Options::ENABLE_FOOTNOTES);
+    options.insert(Options::ENABLE_TASKLISTS);
+    options.insert(Options::ENABLE_SMART_PUNCTUATION);
+    
+    let parser = Parser::new_ext(markdown, options);
+    let mut html_output = String::new();
+    html::push_html(&mut html_output, parser);
+    html_output
 }
 
 #[tauri::command]
@@ -69,7 +84,9 @@ async fn send_message_to_mistral(message: String) -> Result<String, String> {
         .map_err(|e| format!("Failed to parse response: {}", e))?;
 
     if let Some(choice) = mistral_response.choices.first() {
-        Ok(choice.message.content.clone())
+        // Convert markdown to HTML before returning
+        let html_content = markdown_to_html(&choice.message.content);
+        Ok(html_content)
     } else {
         Err("No response from Mistral API".to_string())
     }

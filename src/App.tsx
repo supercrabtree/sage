@@ -49,7 +49,7 @@ function App() {
       
       const aiMessage: Message = {
         id: Date.now() + 1,
-        text: aiResponse,
+        text: aiResponse, // This is now HTML from the Rust backend
         sender: 'ai',
         timestamp: new Date()
       };
@@ -106,7 +106,11 @@ function App() {
             messages.map(message => (
               <div key={message.id} className={`message ${message.sender}`}>
                 <div className="message-bubble">
-                  {message.text}
+                  {message.sender === 'ai' ? (
+                    <div dangerouslySetInnerHTML={{ __html: message.text }} />
+                  ) : (
+                    message.text
+                  )}
                 </div>
               </div>
             ))
