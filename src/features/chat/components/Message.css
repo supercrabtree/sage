@@ -213,23 +213,10 @@
   border-color: rgba(147, 197, 253, 0.5);
 }
 
-.option-pill:active {
-  transform: translateY(0);
-}
-
 .option-pill.clicked {
   background: rgba(34, 197, 94, 0.2);
   border-color: rgba(34, 197, 94, 0.5);
   color: #059669;
-}
-
-.option-pill.clicked::after {
-  content: '✓';
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
 }
 
 /* Loading state styles */
