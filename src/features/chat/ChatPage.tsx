@@ -6,7 +6,16 @@ import { ChatInput } from './components/ChatInput';
 import './ChatPage.css';
 
 export const ChatPage: React.FC = () => {
-  const { messages, isLoading, sendMessage, clearChat } = useChat();
+  const { 
+    messages, 
+    messageOptions, 
+    clickedOptions, 
+    isLoading, 
+    sendMessage, 
+    handleOptionClick, 
+    retryOptionExtraction, 
+    clearChat 
+  } = useChat();
   const { messagesEndRef, setAiMessageRef } = useScrollManager(messages, isLoading);
 
   return (
@@ -27,6 +36,10 @@ export const ChatPage: React.FC = () => {
         isLoading={isLoading}
         messagesEndRef={messagesEndRef}
         setAiMessageRef={setAiMessageRef}
+        messageOptions={messageOptions}
+        clickedOptions={clickedOptions}
+        onOptionClick={handleOptionClick}
+        onRetryOptions={retryOptionExtraction}
       />
 
       <ChatInput 

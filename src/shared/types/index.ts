@@ -19,4 +19,16 @@ export type Message = UserMessage | AiMessage;
 export interface AiResponse {
   original: string;
   formatted: string;
+}
+
+// New: types for option extraction
+export interface OptionExtractionResponse {
+  hasOptions: boolean;
+  options: string[];
+}
+
+export interface MessageOptionState {
+  options: string[];
+  loading: boolean;
+  error?: string;
 } 

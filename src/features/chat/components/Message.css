@@ -169,4 +169,113 @@
   .message {
     max-width: 90%;
   }
+}
+
+/* Option pills styles */
+.message-options {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.message-options.animate-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.option-pill {
+  background: rgba(147, 197, 253, 0.1);
+  border: 1px solid rgba(147, 197, 253, 0.3);
+  color: #3b82f6;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+
+.option-pill:hover {
+  background: rgba(147, 197, 253, 0.2);
+  border-color: rgba(147, 197, 253, 0.5);
+}
+
+.option-pill:active {
+  transform: translateY(0);
+}
+
+.option-pill.clicked {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #059669;
+}
+
+.option-pill.clicked::after {
+  content: '✓';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+}
+
+/* Loading state styles */
+.options-loading {
+  margin-top: 12px;
+}
+
+.loading-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.loading-pill {
+  height: 32px;
+  border-radius: 16px;
+  background: rgba(147, 197, 253, 0.1);
+  border: 1px solid rgba(147, 197, 253, 0.2);
+  animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+.loading-pill:nth-child(1) { width: 80px; }
+.loading-pill:nth-child(2) { width: 100px; animation-delay: 0.2s; }
+.loading-pill:nth-child(3) { width: 90px; animation-delay: 0.4s; }
+
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.options-error {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.retry-button {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #dc2626;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
 } 
