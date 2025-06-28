@@ -27,23 +27,17 @@ export const MessageList: React.FC<MessageListProps> = ({
 }) => {
   return (
     <div className="messages-container">
-      {messages.length === 0 ? (
-        <div className="empty-state">
-          <p>Start a conversation to begin learning!</p>
-        </div>
-      ) : (
-        messages.map(message => (
-          <Message 
-            key={message.id} 
-            message={message}
-            setAiMessageRef={message.sender === 'ai' ? setAiMessageRef(message.id) : undefined}
-            optionState={messageOptions.get(message.id)}
-            clickedOptions={clickedOptions}
-            onOptionClick={onOptionClick}
-            onRetryOptions={onRetryOptions}
-          />
-        ))
-      )}
+      {messages.map(message => (
+        <Message 
+          key={message.id} 
+          message={message}
+          setAiMessageRef={message.sender === 'ai' ? setAiMessageRef(message.id) : undefined}
+          optionState={messageOptions.get(message.id)}
+          clickedOptions={clickedOptions}
+          onOptionClick={onOptionClick}
+          onRetryOptions={onRetryOptions}
+        />
+      ))}
       {isLoading && (
         <div className="message ai">
           <div className="message-bubble loading">
