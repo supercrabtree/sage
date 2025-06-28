@@ -21,7 +21,6 @@ export const ChatPage: React.FC = () => {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h1 className="chat-title">Sage 🌿</h1>
         <button 
           className="clear-button"
           onClick={clearChat}
