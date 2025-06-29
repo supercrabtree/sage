@@ -34,11 +34,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
         placeholder="Ask Sage anything..."
         className="message-input"
         disabled={isLoading}
+        data-testid="chat-input"
       />
       <button 
         onClick={handleSendMessage}
         className="send-button"
         disabled={isLoading || inputText.trim() === ""}
+        data-testid="send-button"
       >
         <SendIcon />
       </button>

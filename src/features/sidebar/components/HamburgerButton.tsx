@@ -12,6 +12,7 @@ export const HamburgerButton: React.FC<HamburgerButtonProps> = ({ isOpen, onClic
       className={`hamburger-button ${isOpen ? 'open' : ''}`}
       onClick={onClick}
       aria-label="Toggle menu"
+      data-testid="hamburger-button"
     >
       <span className="hamburger-line"></span>
       <span className="hamburger-line"></span>
