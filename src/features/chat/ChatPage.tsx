@@ -5,7 +5,11 @@ import { MessageList } from './components/MessageList';
 import { ChatInput } from './components/ChatInput';
 import './ChatPage.css';
 
-export const ChatPage: React.FC = () => {
+interface ChatPageProps {
+  chatHook: ReturnType<typeof useChat>;
+}
+
+export const ChatPage: React.FC<ChatPageProps> = ({ chatHook }) => {
   const { 
     messages, 
     messageOptions, 
@@ -13,23 +17,16 @@ export const ChatPage: React.FC = () => {
     isLoading, 
     sendMessage, 
     handleOptionClick, 
-    retryOptionExtraction, 
-    clearChat 
-  } = useChat();
+    retryOptionExtraction
+  } = chatHook;
+  
   const { messagesEndRef, setAiMessageRef } = useScrollManager(messages, isLoading);
 
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <button 
-          className="clear-button"
-          onClick={clearChat}
-          disabled={isLoading}
-        >
-          Clear
-        </button>
+        <h1 className="chat-title">Sage 🌿</h1>
       </div>
-      
       <MessageList 
         messages={messages}
         isLoading={isLoading}
