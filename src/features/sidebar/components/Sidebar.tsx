@@ -58,6 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button 
                 className={`sidebar-item ${currentPage === 'knowledge' ? 'active' : ''}`}
                 onClick={() => handleNavigateClick('knowledge')}
+                data-testid="knowledge-nav"
               >
                 <span className="sidebar-icon">🧠</span>
                 My Knowledge

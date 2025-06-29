@@ -1,0 +1,212 @@
+.knowledge-tag-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 4px;
+}
+
+.knowledge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(141, 175, 129, 0.3);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.knowledge-tag:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(141, 175, 129, 0.2);
+}
+
+.tag-title {
+  font-weight: 500;
+  color: #2d3748;
+  font-size: 0.9rem;
+}
+
+.tag-confidence {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tag-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: white;
+  border: 1px solid rgba(141, 175, 129, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(141, 175, 129, 0.15);
+  z-index: 1000;
+  min-width: 280px;
+  padding: 16px;
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(141, 175, 129, 0.2);
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.popup-confidence {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: rgba(216, 228, 208, 0.3);
+}
+
+.popup-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.popup-meta small {
+  color: #718096;
+  font-size: 0.8rem;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.popup-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background: #8db57d;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #7ba169;
+}
+
+.delete-btn {
+  background: #e56b6f;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #d04e52;
+}
+
+.popup-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-title-input {
+  padding: 8px 12px;
+  border: 1px solid rgba(141, 175, 129, 0.3);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.edit-title-input:focus {
+  border-color: #8db57d;
+  box-shadow: 0 0 0 2px rgba(141, 175, 129, 0.2);
+}
+
+.edit-confidence-select {
+  padding: 8px 12px;
+  border: 1px solid rgba(141, 175, 129, 0.3);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  background: white;
+  cursor: pointer;
+}
+
+.edit-confidence-select:focus {
+  border-color: #8db57d;
+  box-shadow: 0 0 0 2px rgba(141, 175, 129, 0.2);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.save-btn {
+  background: #8db57d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-btn:hover {
+  background: #7ba169;
+}
+
+.cancel-btn {
+  background: #a0aec0;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover {
+  background: #8d9db0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tag-popup {
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 250px;
+  }
+  
+  .knowledge-tag {
+    font-size: 0.85rem;
+  }
+} 

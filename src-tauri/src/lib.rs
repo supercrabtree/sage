@@ -56,6 +56,23 @@ async fn extract_options_from_message(
     state.ai_service.extract_options(message).await
 }
 
+#[tauri::command]
+async fn knowledge_discovery(
+    conversation_context: String,
+    user_input: String,
+    state: tauri::State<'_, AppState>,
+) -> Result<AiResponse, String> {
+    state.ai_service.knowledge_discovery(conversation_context, user_input).await
+}
+
+#[tauri::command]
+async fn extract_knowledge_from_conversation(
+    conversation: String,
+    state: tauri::State<'_, AppState>,
+) -> Result<String, String> {
+    state.ai_service.extract_knowledge(conversation).await
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let app_state = AppState::new().expect("Failed to initialize app state");
@@ -65,7 +82,9 @@ pub fn run() {
         .manage(app_state)
         .invoke_handler(tauri::generate_handler![
             send_message_to_mistral,
-            extract_options_from_message
+            extract_options_from_message,
+            knowledge_discovery,
+            extract_knowledge_from_conversation
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

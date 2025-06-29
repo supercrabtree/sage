@@ -6,6 +6,8 @@ use std::time::Duration;
 
 const ROLE_PROMPT: &str = include_str!("role_prompt.txt");
 const OPTION_EXTRACTION_PROMPT: &str = include_str!("option_extraction_prompt.txt");
+const KNOWLEDGE_DISCOVERY_PROMPT: &str = include_str!("knowledge_discovery_prompt.txt");
+const KNOWLEDGE_EXTRACTION_PROMPT: &str = include_str!("knowledge_extraction_prompt.txt");
 
 static HTTP_CLIENT: OnceLock<reqwest::Client> = OnceLock::new();
 
@@ -164,5 +166,106 @@ impl AiService {
         mistral_response.choices.first()
             .map(|choice| choice.message.content.clone())
             .ok_or_else(|| "No response from Mistral API for option extraction".to_string())
+    }
+
+    pub async fn extract_knowledge(&self, conversation: String) -> Result<String, String> {
+        let extraction_prompt = KNOWLEDGE_EXTRACTION_PROMPT.replace("{}", &conversation);
+        
+        let request = MistralRequest {
+            model: self.config.option_model.clone(), // Use same fast model as option extraction
+            messages: vec![MistralMessage {
+                role: "user".to_string(),
+                content: extraction_prompt,
+            }],
+            max_tokens: Some(500), // More tokens for potentially multiple tags
+            temperature: Some(0.1), // Low temperature for structured output
+        };
+
+        let response = get_client()
+            .post("https://api.mistral.ai/v1/chat/completions")
+            .header("Authorization", format!("Bearer {}", self.config.mistral_api_key))
+            .header("Content-Type", "application/json")
+            .json(&request)
+            .send()
+            .await
+            .map_err(|e| {
+                if e.is_timeout() {
+                    "Knowledge extraction timed out - please try again".to_string()
+                } else if e.is_connect() {
+                    "Connection failed - check your internet connection".to_string()
+                } else {
+                    format!("Network error during knowledge extraction: {}", e)
+                }
+            })?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            return Err(format!("Mistral API error during knowledge extraction {}: {}", status, error_text));
+        }
+
+        let mistral_response: MistralResponse = response
+            .json()
+            .await
+            .map_err(|e| format!("Failed to parse knowledge extraction response: {}", e))?;
+
+        mistral_response.choices.first()
+            .map(|choice| choice.message.content.clone())
+            .ok_or_else(|| "No response from Mistral API for knowledge extraction".to_string())
+    }
+
+    pub async fn knowledge_discovery(&self, conversation_context: String, user_input: String) -> Result<AiResponse, String> {
+        let discovery_prompt = format!(
+            "{}\n\nPrevious conversation:\n{}\n\nUser just said: {}\n\nRespond conversationally:",
+            KNOWLEDGE_DISCOVERY_PROMPT,
+            conversation_context,
+            user_input
+        );
+        
+        let request = MistralRequest {
+            model: self.config.model.clone(),
+            messages: vec![MistralMessage {
+                role: "user".to_string(),
+                content: discovery_prompt,
+            }],
+            max_tokens: Some(self.config.max_tokens),
+            temperature: Some(0.7), // Slightly higher temperature for more conversational responses
+        };
+
+        let response = get_client()
+            .post("https://api.mistral.ai/v1/chat/completions")
+            .header("Authorization", format!("Bearer {}", self.config.mistral_api_key))
+            .header("Content-Type", "application/json")
+            .json(&request)
+            .send()
+            .await
+            .map_err(|e| {
+                if e.is_timeout() {
+                    "Knowledge discovery timed out - please try again".to_string()
+                } else if e.is_connect() {
+                    "Connection failed - check your internet connection".to_string()
+                } else {
+                    format!("Network error during knowledge discovery: {}", e)
+                }
+            })?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_else(|_| "Unknown error".to_string());
+            return Err(format!("Mistral API error during knowledge discovery {}: {}", status, error_text));
+        }
+
+        let mistral_response: MistralResponse = response
+            .json()
+            .await
+            .map_err(|e| format!("Failed to parse knowledge discovery response: {}", e))?;
+
+        if let Some(choice) = mistral_response.choices.first() {
+            let original = choice.message.content.clone();
+            let formatted = markdown_to_html(&original);
+            Ok(AiResponse { original, formatted })
+        } else {
+            Err("No response from Mistral API for knowledge discovery".to_string())
+        }
     }
 } 

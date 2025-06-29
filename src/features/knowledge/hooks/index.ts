@@ -1,0 +1,1 @@
+export { useKnowledgeTags } from './useKnowledgeTags'; 

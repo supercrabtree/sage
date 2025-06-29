@@ -69,4 +69,22 @@
   .input-container {
     margin: 0.5rem 1.5rem 1.5rem 1.5rem;
   }
+}
+
+.chat-input-wrapper {
+  /* Simple wrapper - most styling is now in ChatInput */
+}
+
+/* Override ChatInput styles for chat context */
+.chat-input-wrapper .chat-input-container {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 0;
+}
+
+.chat-input-wrapper .chat-input {
+  /* Add any chat-specific input styling here if needed */
+}
+
+.chat-input-wrapper .chat-send-button {
+  /* Add any chat-specific send button styling here if needed */
 } 

@@ -31,4 +31,31 @@ export interface MessageOptionState {
   options: string[];
   loading: boolean;
   error?: string;
+}
+
+// Knowledge Tag types
+export type ConfidenceLevel = 'Beginner' | 'Intermediate' | 'Expert';
+
+export interface KnowledgeTag {
+  id: string;
+  title: string;
+  confidence: ConfidenceLevel;
+  createdAt: Date;
+  source: 'discovered' | 'manual'; // discovered = through AI, manual = user added
+}
+
+export interface QuizMessage {
+  id: string;
+  sender: 'user' | 'ai';
+  content: string;
+  timestamp: Date;
+  suggestedTags?: Omit<KnowledgeTag, 'id' | 'createdAt'>[]; // AI messages can suggest partial tags
+}
+
+export interface QuizSession {
+  id: string;
+  messages: QuizMessage[];
+  suggestedTags: Omit<KnowledgeTag, 'id' | 'createdAt'>[];
+  isActive: boolean;
+  startedAt: Date;
 } 

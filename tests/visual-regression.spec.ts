@@ -89,4 +89,91 @@ test.describe('Visual Regression Tests - Layout Consistency', () => {
       test.skip();
     }
   });
+});
+
+test.describe('Knowledge Page Visual Regression Tests', () => {
+  
+  test.beforeEach(async ({ page }) => {
+    // Navigate to the app and then to knowledge page
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Open sidebar and navigate to knowledge page
+    await page.click('[data-testid="hamburger-button"]');
+    await page.waitForTimeout(300);
+    await page.click('[data-testid="knowledge-nav"]');
+    await page.waitForTimeout(500);
+  });
+
+  test('Knowledge page - Empty state desktop', async ({ page }) => {
+    await expect(page).toHaveScreenshot('knowledge-empty-desktop.png');
+  });
+
+  test('Knowledge page - Empty state mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await expect(page).toHaveScreenshot('knowledge-empty-mobile.png');
+  });
+
+  test('Knowledge page - Empty state tablet', async ({ page }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await expect(page).toHaveScreenshot('knowledge-empty-tablet.png');
+  });
+
+  test('Knowledge page - Add tag form open', async ({ page }) => {
+    await page.click('[data-testid="add-tag-button"]');
+    await page.waitForTimeout(300);
+    await expect(page).toHaveScreenshot('knowledge-add-tag-form.png');
+  });
+
+  test('Knowledge page - Add tag form with input', async ({ page }) => {
+    await page.click('[data-testid="add-tag-button"]');
+    await page.waitForTimeout(300);
+    await page.fill('[data-testid="tag-title-input"]', 'React useEffect cleanup patterns');
+    await expect(page).toHaveScreenshot('knowledge-add-tag-form-filled.png');
+  });
+
+  test('Knowledge page - AI quiz welcome state', async ({ page }) => {
+    // Scroll to AI quiz section
+    await page.locator('[data-testid="start-quiz-button"]').scrollIntoViewIfNeeded();
+    await expect(page).toHaveScreenshot('knowledge-ai-quiz-welcome.png');
+  });
+
+  test('Knowledge page - AI quiz started', async ({ page }) => {
+    await page.locator('[data-testid="start-quiz-button"]').scrollIntoViewIfNeeded();
+    await page.click('[data-testid="start-quiz-button"]');
+    await page.waitForTimeout(500);
+    await expect(page).toHaveScreenshot('knowledge-ai-quiz-started.png');
+  });
+
+  test('Knowledge page - Large viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await expect(page).toHaveScreenshot('knowledge-large-desktop.png');
+  });
+
+  test('Knowledge page - Small mobile viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 568 });
+    await expect(page).toHaveScreenshot('knowledge-small-mobile.png');
+  });
+
+  test('Knowledge page - Mobile with add tag form', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.click('[data-testid="add-tag-button"]');
+    await page.waitForTimeout(300);
+    await expect(page).toHaveScreenshot('knowledge-mobile-add-form.png');
+  });
+
+  test('Knowledge page - Mobile AI quiz started', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.locator('[data-testid="start-quiz-button"]').scrollIntoViewIfNeeded();
+    await page.click('[data-testid="start-quiz-button"]');
+    await page.waitForTimeout(500);
+    await expect(page).toHaveScreenshot('knowledge-mobile-quiz-started.png');
+  });
+
+  test('Knowledge page - Sidebar open state', async ({ page }) => {
+    // Open sidebar over knowledge page
+    await page.click('[data-testid="hamburger-button"]');
+    await page.waitForTimeout(500);
+    await expect(page).toHaveScreenshot('knowledge-sidebar-open.png');
+  });
 }); 

@@ -1,0 +1,46 @@
+.suggested-tags {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(216, 228, 208, 0.2);
+  border-radius: 8px;
+}
+
+.suggested-tags-title {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.suggested-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.suggested-tag-btn {
+  background: rgba(141, 175, 129, 0.2);
+  border: 1px solid rgba(141, 175, 129, 0.4);
+  color: #4a6741;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin: 0;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.suggested-tag-btn:hover {
+  background: rgba(141, 175, 129, 0.3);
+  border-color: rgba(141, 175, 129, 0.6);
+}
+
+/* Variants for different contexts */
+.suggested-tags.underneath {
+  background: rgba(216, 228, 208, 0.15);
+  border: 1px solid rgba(216, 228, 208, 0.3);
+  margin: 8px 0 16px 0;
+  padding: 12px;
+  border-radius: 12px;
+} 
