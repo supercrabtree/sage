@@ -1,13 +1,23 @@
 import React from 'react';
 import './Sidebar.css';
 
+type Page = 'chat' | 'knowledge';
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
   onClearChat: () => void;
+  onNavigate: (page: Page) => void;
+  currentPage: Page;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onClearChat }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ 
+  isOpen, 
+  onClose, 
+  onClearChat, 
+  onNavigate, 
+  currentPage 
+}) => {
   const handleMenuItemClick = (action: string) => {
     console.log(`${action} clicked`);
     onClose();
@@ -15,6 +25,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onClearChat }
 
   const handleClearChatClick = () => {
     onClearChat();
+  };
+
+  const handleNavigateClick = (page: Page) => {
+    onNavigate(page);
   };
 
   return (
@@ -33,10 +47,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onClearChat }
           <ul>
             <li>
               <button 
+                className={`sidebar-item ${currentPage === 'chat' ? 'active' : ''}`}
+                onClick={() => handleNavigateClick('chat')}
+              >
+                <span className="sidebar-icon">💬</span>
+                Chat
+              </button>
+            </li>
+            <li>
+              <button 
+                className={`sidebar-item ${currentPage === 'knowledge' ? 'active' : ''}`}
+                onClick={() => handleNavigateClick('knowledge')}
+              >
+                <span className="sidebar-icon">🧠</span>
+                My Knowledge
+              </button>
+            </li>
+            <li>
+            </li>
+            <li>
+              <button 
                 className="sidebar-item" 
                 onClick={() => handleMenuItemClick('New Chat')}
               >
-                <span className="sidebar-icon">💬</span>
+                <span className="sidebar-icon">✨</span>
                 New Conversation
               </button>
             </li>
@@ -47,15 +81,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onClearChat }
               >
                 <span className="sidebar-icon">📝</span>
                 Conversation History
-              </button>
-            </li>
-            <li>
-              <button 
-                className="sidebar-item" 
-                onClick={() => handleMenuItemClick('My Knowledge')}
-              >
-                <span className="sidebar-icon">🧠</span>
-                My Knowledge
               </button>
             </li>
             <li>

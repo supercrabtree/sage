@@ -1,0 +1,47 @@
+.knowledge-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.knowledge-header {
+  padding: 20px 0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 30px;
+}
+
+.knowledge-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  text-align: center;
+}
+
+.knowledge-content {
+  flex: 1;
+  overflow-y: auto;
+    padding: 0 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .knowledge-container {
+    padding: 10px;
+  }
+  
+  .knowledge-title {
+    font-size: 2rem;
+  }
+  
+  .knowledge-content {
+    padding: 0 10px;
+  }
+  
+  .knowledge-categories {
+    grid-template-columns: 1fr;
+  }
+} 
