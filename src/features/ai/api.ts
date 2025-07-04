@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { Message, AiResponse, OptionExtractionResponse } from "../../shared/types";
+import { Message, AiResponse, OptionExtractionResponse, KnowledgeTag } from "../../shared/types";
 
 export const sendMessageToAI = async (messages: Message[]): Promise<AiResponse> => {
   // Prepare conversation history for API - use original text
@@ -11,6 +11,31 @@ export const sendMessageToAI = async (messages: Message[]): Promise<AiResponse> 
 
   return await invoke<AiResponse>("send_message_to_mistral", { 
     messages: conversationHistory
+  });
+};
+
+// New: Send message with knowledge context for enhanced comparisons
+export const sendMessageWithKnowledge = async (
+  messages: Message[], 
+  knowledgeTags: KnowledgeTag[]
+): Promise<AiResponse> => {
+  // Prepare conversation history for API - use original text
+  const conversationHistory = messages.map(msg => ({
+    id: msg.id,
+    text: msg.text, // Always contains the original text
+    sender: msg.sender
+  }));
+
+  // Format knowledge tags for context
+  const knowledgeContext = knowledgeTags.map(tag => ({
+    title: tag.title,
+    confidence: tag.confidence,
+    source: tag.source
+  }));
+
+  return await invoke<AiResponse>("send_message_with_knowledge", { 
+    messages: conversationHistory,
+    knowledgeContext
   });
 };
 

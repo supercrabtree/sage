@@ -24,6 +24,29 @@
   text-align: center;
 }
 
+.knowledge-indicator {
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.knowledge-badge {
+  display: inline-block;
+  background-color: #e6f3ff;
+  color: #1e40af;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.knowledge-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .chat-container {

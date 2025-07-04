@@ -15,6 +15,7 @@ export const ChatPage: React.FC<ChatPageProps> = ({ chatHook }) => {
     messageOptions, 
     clickedOptions, 
     isLoading, 
+    knowledgeTags,
     sendMessage, 
     handleOptionClick, 
     retryOptionExtraction
@@ -26,6 +27,16 @@ export const ChatPage: React.FC<ChatPageProps> = ({ chatHook }) => {
     <div className="chat-container">
       <div className="chat-header">
         <h1 className="chat-title">Sage 🌿</h1>
+        {knowledgeTags.length > 0 && (
+          <div className="knowledge-indicator">
+            <span className="knowledge-badge">
+              🧠 {knowledgeTags.length} knowledge tags active
+            </span>
+            <span className="knowledge-hint">
+              Providing context for better comparisons and insights
+            </span>
+          </div>
+        )}
       </div>
       <MessageList 
         messages={messages}

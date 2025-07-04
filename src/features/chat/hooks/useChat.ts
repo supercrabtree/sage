@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Message, UserMessage, AiMessage, MessageOptionState } from '../../../shared/types';
-import { loadMessages, saveMessages, clearChatHistory } from '../../../shared/utils/storage';
-import { sendMessageToAI, extractOptionsFromMessage } from '../../ai/api';
+import { Message, UserMessage, AiMessage, MessageOptionState, KnowledgeTag } from '../../../shared/types';
+import { loadMessages, saveMessages, clearChatHistory, loadKnowledgeTags } from '../../../shared/utils/storage';
+import { sendMessageToAI, sendMessageWithKnowledge, extractOptionsFromMessage } from '../../ai/api';
 
 export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [knowledgeTags, setKnowledgeTags] = useState<KnowledgeTag[]>([]);
   
   // New: Option state management
   const [messageOptions, setMessageOptions] = useState<Map<number, MessageOptionState>>(new Map());
@@ -15,10 +16,12 @@ export const useChat = () => {
   // Track pending option extractions to avoid duplicates
   const pendingExtractions = useRef(new Set<number>());
 
-  // Load messages from localStorage on startup
+  // Load messages and knowledge tags from localStorage on startup
   useEffect(() => {
     const savedMessages = loadMessages();
+    const savedKnowledgeTags = loadKnowledgeTags();
     setMessages(savedMessages);
+    setKnowledgeTags(savedKnowledgeTags);
     setIsInitialized(true);
   }, []);
 
@@ -56,7 +59,10 @@ export const useChat = () => {
     setIsLoading(true);
 
     try {
-      const aiResponse = await sendMessageToAI(newMessages);
+      // Use knowledge context if available, otherwise fall back to regular messaging
+      const aiResponse = knowledgeTags.length > 0 
+        ? await sendMessageWithKnowledge(newMessages, knowledgeTags)
+        : await sendMessageToAI(newMessages);
       
       const aiMessageId = Date.now() + 1;
       const aiMessage: AiMessage = {
@@ -162,6 +168,7 @@ export const useChat = () => {
     messageOptions,
     clickedOptions,
     isLoading,
+    knowledgeTags,
     sendMessage,
     handleOptionClick,
     retryOptionExtraction,

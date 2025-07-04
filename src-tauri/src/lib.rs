@@ -26,6 +26,13 @@ pub struct AiResponse {
     pub formatted: String,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct KnowledgeContext {
+    pub title: String,
+    pub confidence: String,
+    pub source: String,
+}
+
 // App state
 struct AppState {
     ai_service: Arc<AiService>,
@@ -46,6 +53,15 @@ async fn send_message_to_mistral(
     state: tauri::State<'_, AppState>,
 ) -> Result<AiResponse, String> {
     state.ai_service.send_messages(messages).await
+}
+
+#[tauri::command]
+async fn send_message_with_knowledge(
+    messages: Vec<FrontendMessage>,
+    knowledge_context: Vec<KnowledgeContext>,
+    state: tauri::State<'_, AppState>,
+) -> Result<AiResponse, String> {
+    state.ai_service.send_messages_with_knowledge(messages, knowledge_context).await
 }
 
 #[tauri::command]
@@ -82,6 +98,7 @@ pub fn run() {
         .manage(app_state)
         .invoke_handler(tauri::generate_handler![
             send_message_to_mistral,
+            send_message_with_knowledge,
             extract_options_from_message,
             knowledge_discovery,
             extract_knowledge_from_conversation
